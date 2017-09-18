@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+	<title>bd</title>
+	<style>
+		html,body {
+			height: 100%;
+			width: 100%;
+		}
+		body {
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
+			border: 1px solid #ccc;
+			background: url("images/bg.jpg") no-repeat left top;
+			background-size: 100% 100%;
+		}
+		#dv{
+			width: 90%;
+			height: 500px;
+			margin: 200px auto; 
+			text-align: center;
+		}
+		#text{
+			width: 62%;
+			height: 30px;
+			border:none;
+			border-radius: 30px;
+			padding: 0 10px;
+			outline: none;
+		}
+		#btn {
+			width: 24%;
+			height: 30px;
+			border:none;
+			border-radius: 30px;
+			outline: none;
+		}
+		#list {
+			width: 62%;
+			margin-left: 6%;
+			text-align: left;
+			border: 1px solid #ccc;
+			border-top:none;
+			display: none;
+		}
+		@media screen and (min-width:768px) {
+			body {
+				background: url("images/bg.jpg") no-repeat left top;
+				background-size: 100% 100%;
+			}
+			#dv{width: 800px;}
+			#text{width: 500px;}
+			#btn{width: 100px;}
+			#list{
+				width: 492px;
+				margin-left: 102px;
+			}
+		}
+		ul {
+			list-style: none;
+			margin: 0;
+			padding:0; 
+		}
+		li{
+			height: 30px;
+			cursor: pointer;
+		}
+		ul>li>a{
+			display: block;
+			padding-left: 10px;
+			line-height: 30px;
+			color: #ccc;
+			text-decoration:none;
+		}
+	</style>
+</head>
+<body>
+	<div id="dv">
+		<!-- <form action="" autocomplete="off" > -->
+			<input type="search" placeholder="请输入搜索内容" autocomplete="off" id='text'>
+			<input type="button" value="水手怕水" id="btn">
+		<!-- </form> -->
+		<div id="list">
+			<ul>
+			</ul>
+		</div>
+	</div>
+<script src="jQuery/jquery.min.js"></script>
+<script>
+	var text = $("#text")
+	var btn = $("#btn")
+	var list = $("#list")
+	var index = -1
+	
+	function getInfo(data){
+		list.children("ul").html("")
+		//console.log(data)
+		var result = data.s
+		//遍历获取的数据
+		result.forEach(function(item,index){
+			//console.log(index,item)
+			var li = $("<li></li>")
+			//创建 li 追加到 ul 中
+			var a = $("<a href='https://www.baidu.com/s?wd="+item+"'></a>")
+			a.text(item)
+			li.append(a)
+			//console.log(list.children("ul"))
+			list.children("ul").append(li)
+			//鼠标经过高亮效果
+			li.mouseover(function(){
+				//console.log("over")
+				$(this).siblings("li").css("backgroundColor","rgba(0,0,0,0)")
+				$(this).css("backgroundColor","rgba(130,130,130,.5)")
+				text.val($(this).text())
+			})
+			//点击 li 的时候隐藏 list
+			li.click(function(){ 
+				//console.log($(this).text())
+				list.css("display","none")
+			})
+		})
+		//点击 UL 以外的地方隐藏 ul 
+		document.onclick=function () {
+			list.css("display","none")
+		}
+		//删除页面多余的 script 标签
+		var scripts = $("script")
+		//console.log(scripts)
+		//console.log(scripts.length,scripts)
+		//console.log(scripts[3])
+		scripts[3].remove()
+	}
+	// text 文本内容发生改变时 获取数据
+	text.on("input",function(e){
+
+		//console.log(e.keyCode)
+		if($(this).val().length>0 && e.keyCode!=40 &&e.keyCode!= 38 ){
+
+			list.css("display","block")
+			//console.log('aaa')
+			//创建 script 标签追加到页面
+			var script = $("<script></\script>")
+			script.attr("src","https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?wd="+$(this).val()+"&json=1&p=3&sid=1429_21110_17001&req=2&csor=1&cb=getInfo&_=1504768871561")
+			$("body").append(script)
+		}else{
+			list.css("display","none")
+		}
+		//console.log(e.keyCode)
+	})
+	//键盘抬起事件
+	text.on("keyup",function(e){
+		//console.log(e.keyCode)  enter 13    ↑ 38   ↓ 40   32 tab
+		//回车跳转
+		
+		if(e.keyCode==13){
+			//alert(5);
+			window.open("https://www.baidu.com/s?wd="+text.val(),"_blank")
+		
+
+	}else if(e.keyCode==40){
+
+			//方向键向下
+			//console.log(liList.length)
+			if(index==list.children("ul").children("li").length){
+				index =0
+			}
+			index++
+			upDown()
+			//空格键 为 search 搜索框 添加当前选中的文本
+
+			/*if(e.keyCode==13){
+				var hehe =text.val(list.children("ul").children("li:eq("+index+")").text());
+				//alert(4);
+				window.location.href="https://www.baidu.com/s?wd="+hehe+"&rsv_spt=1&rsv_iqid=0xdb548a6c000048fd&issp=1&f=8&rsv_bp=1&rsv_idx=2&ie=utf-8&rqlang=cn&tn=baiduhome_pg&rsv_enter=1&oq=%25E7%2599%25BE%25E5%25BA%25A6%25E6%2595%25B0%25E6%258D%25AE%25E6%258E%25A5%25E5%258F%25A3api&rsv_t=b9afjprXSzfAlyh7KCWG4N%2BO3YiFjskEEZ6FvxcA7RsQxUiFxLw8d49ssvpdmkdpE5Rk&rsv_pq=ae1349ab00006634&inputT=907585&rsv_sug3=45&rsv_sug1=41&rsv_sug7=100&rsv_sug2=0&rsv_sug4=910148&rsv_sug=1","_blank";
+				//console.log(5);
+
+			}*/
+		}else if(e.keyCode==38){
+
+			//方向键向上
+			if(index==0){
+				index=list.children("ul").children("li").length
+			}
+			index--
+			upDown()
+
+			/*if(e.keyCode==13){
+
+			var hehe = text.val(list.children("ul").children("li:eq("+index+")").text())
+			window.location.href="https://www.baidu.com/s?wd="+hehe+"&rsv_spt=1&rsv_iqid=0xdb548a6c000048fd&issp=1&f=8&rsv_bp=1&rsv_idx=2&ie=utf-8&rqlang=cn&tn=baiduhome_pg&rsv_enter=1&oq=%25E7%2599%25BE%25E5%25BA%25A6%25E6%2595%25B0%25E6%258D%25AE%25E6%258E%25A5%25E5%258F%25A3api&rsv_t=b9afjprXSzfAlyh7KCWG4N%2BO3YiFjskEEZ6FvxcA7RsQxUiFxLw8d49ssvpdmkdpE5Rk&rsv_pq=ae1349ab00006634&inputT=907585&rsv_sug3=45&rsv_sug1=41&rsv_sug7=100&rsv_sug2=0&rsv_sug4=910148&rsv_sug=1","_blank";
+			}*/
+
+		}
+	})
+
+	// 点击获取的数据跳转至相应的搜索页面
+	btn.click(function(){
+		//console.log("aaa")
+		// var aa = list.children("ul").children("li").children("a")
+		//console.log(text.val())
+	
+		window.open("https://www.baidu.com/s?wd="+text.val(),"_blank")
+	})
+
+	// 方向键上下封装的功能函数
+	function upDown(){
+		list.css("display","block")
+		var liList = list.children("ul").children("li")
+		liList.css("backgroundColor","rgba(0,0,0,0)")
+		list.children("ul").children("li:eq("+index+")").css("backgroundColor","rgba(130,130,130,.5)")
+		text.val(list.children("ul").children("li:eq("+index+")").text())
+	}
+</script>
+</body>
+</html>

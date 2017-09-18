@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+	<title>Document</title>
+	<style>
+		html,body{
+			width: 100%;
+			height: 100%;
+		}
+		body {
+			margin: 0;
+			padding: 0;
+			overflow: hidden;
+			border: 1px solid #fff;
+			background: url("images/zx.jpg") no-repeat left top;
+			background-size: 100% 100%;
+		}
+		#dv{
+			width: 90%;
+			text-align: center;
+			margin: 200px auto;
+		}
+		#text{
+			width: 62%;
+			height: 30px;
+			padding: 0 10px;
+			outline: none;
+			border: none;
+			border-radius: 15px;
+		}
+		#btn {
+			width: 20%;
+			height: 30px;
+			border: none;
+			border-radius: 15px;
+		}
+		#list {
+			width: 67%;
+			margin-left: 6%;
+			text-align: left;
+			background-color: rgba(0,0,0,.4);
+			border-top:none;
+			display: none;
+		}
+		@media screen and (min-width:768px) {
+			body {
+				background: url("images/bg1.jpg") no-repeat left center;
+				background-size: 100% 100%;
+			}
+			#dv{width: 800px;}
+			#text{width: 500px;}
+			#btn{width: 100px;}
+			#list{
+				width: 522px;
+				margin-left: 86px;
+				background: url('images/bg1.jpg');
+			}
+		}
+		ul {
+			list-style: none;
+			margin: 0;
+			padding:0; 
+		}
+		li{
+			height: 30px;
+			cursor: pointer;
+		}
+		ul>li>a{
+			display: block;
+			padding-left: 10px;
+			line-height: 30px;
+			text-decoration:none;
+			color: #fff;
+		}
+		ul>li>a:visited{
+			color: #000;
+		}
+	</style>
+</head>
+<body>
+	<div id="dv">
+		<input type="text" placeholder="请输入搜索内容" id='text'>
+		<input type="button" value="~~" id="btn">
+		<div id="list">
+			<ul>				
+			</ul>
+		</div>
+	</div>
+</body>
+<script>
+	var text = document.getElementById("text")
+	var btn = document.getElementById("btn")
+	var list = document.getElementById("list")
+	var ul = list.lastElementChild
+	var index = -1
+	text.oninput=function(){
+		ul.innerHTML=""
+		//console.log("aaa")
+		if(this.value.length>0){
+			//先清空 list 内容
+			var script = document.createElement("script")
+			script.src="https://sug.so.360.cn/suggest?callback=getInfo&encodein=utf-8&encodeout=utf-8&format=json&fields=word&word="+this.value
+			document.getElementsByTagName("body")[0].appendChild(script)
+			// 删除页面多余的 script 标签
+			var scripts = document.getElementsByTagName("script")
+			//console.log(scripts)
+			//console.log(scripts[1])
+			document.getElementsByTagName("body")[0].removeChild(scripts[1])
+
+		}else{
+		list.style.display="none"
+		}
+		//console.log(this.value)
+		//回车跳转
+	
+		text.onkeyup=function(e){
+			if(text.value.length > 0){
+				//console.log(lis.length)
+			//console.log(e.keyCode)
+			if(e.keyCode == 13){
+				window.open("https://www.so.com/s?ie=utf-8&fr=none&src=sug-local&q="+text.value,"_blank")
+			}
+			//键盘上下键
+			if(e.keyCode == 38){
+				if(index <= 0){
+					index = lis.length
+				}
+				index --
+				upDown(index)
+			}else if(e.keyCode == 40){
+				console.log(index)
+				index ++
+				if(index >= lis.length){
+					index = 0
+				}
+				
+				upDown(index)
+			}
+		}
+			}
+	}
+	//script.src 中的回调函数
+	function getInfo(data,e){
+		var result = data.result
+		//console.log(data)
+		list.style.display="block"
+		//console.log(ul)
+		//console.dir(list)
+		result.forEach(function(item,index){
+			//console.log(item,index)
+			var li = document.createElement("li")
+			var aa = "<a href=https://www.so.com/s?ie=utf-8&fr=none&src=sug-local&q="+item.word+">"+item.word+"</a>"
+			li.innerHTML=aa
+			ul.appendChild(li)
+		})
+		//高亮效果 
+		lisHover()
+	}
+	var lis = ul.children
+	function lisHover(){
+		//console.log(lis.length)
+		//li 显示高亮 
+		//console.log(ul.children)
+		for(var i = 0 ; i< lis.length;i++){
+			lis[i].onmouseover=function(){
+				for(var j = 0 ; j<lis.length;j++){
+					lis[j].style.backgroundColor = "rgba(0,0,0,0)"
+				}
+				this.style.backgroundColor = "rgba(193,205,193,.5)"
+				text.value = this.firstChild.innerText
+			}
+		}
+	}
+
+	
+	function upDown(index){
+		//console.log(index)
+		for(var i = 0 ; i<lis.length;i++){
+			lis[i].style.backgroundColor = "rgba(0,0,0,0)"
+		}
+		lis[index].style.backgroundColor = "rgba(193,205,193,.5)"
+		text.value = lis[index].innerText
+	} 
+
+	//btn 点击跳转
+	btn.onclick=function(){
+		window.open("https://www.so.com/s?ie=utf-8&fr=none&src=sug-local&q="+text.value,"_blank")
+	}
+	// 点击页面 隐藏list 
+	document.onclick=function(){
+		list.style.display="none"
+	}
+</script>
+</html>
